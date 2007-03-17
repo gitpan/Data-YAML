@@ -1,0 +1,36 @@
+This file contains message digests of all files listed in MANIFEST,
+signed via the Module::Signature module, version 0.55.
+
+To verify the content in this distribution, first make sure you have
+Module::Signature installed, then type:
+
+    % cpansign -v
+
+It will check each file's integrity, as well as the signature's
+validity.  If "==> Signature verified OK! <==" is not displayed,
+the distribution may already have been compromised, and you should
+not run its Makefile.PL or Build.PL.
+
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
+
+SHA1 9e8c05b030fb7b3c2a2ce487c704ec23d7a53ac9 Changes
+SHA1 c008b06780cc06cc1188447fcc9c8b107581ad00 MANIFEST
+SHA1 d72e13a84b05a4ba91500e6f359da1af45fecec1 META.yml
+SHA1 02ea18d60df5e0b6070f44b5f43694e832f9cacd Makefile.PL
+SHA1 c95e71eaf6e7a839d254d173f68f3906254605af README
+SHA1 7f7000586dc84b72537c1a0e3c396ec4015277ae lib/Data/YAML.pm
+SHA1 bc41a06076453a362b17ee25f9829211c4c90318 lib/Data/YAML/Reader.pm
+SHA1 316c44da0ed7984d74713d7e4e8f35cb8eefe99a lib/Data/YAML/Writer.pm
+SHA1 04046cc66152ff53e9d0e7fd50a599f20af5ff41 t/00.load.t
+SHA1 433d7292911bd90b2c6ac7cc1e29f0ed9580aeba t/10-reader.t
+SHA1 8c223cb3665d71cb98c319222b9da9b1e6d2fa52 t/20-writer.t
+SHA1 bdd09cf1930990e0da69bcd59e551c6b162f24d0 t/pod-coverage.t
+SHA1 0190346d7072d458c8a10a45c19f86db641dcc48 t/pod.t
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.6 (Darwin)
+
+iD8DBQFF/CW4woknRJZQnCERApm8AKCfJ2X01IlNyVH+sMSLumqqAjTb9ACfd9iy
+pmi8KB55W4vWNUywZDvRwiM=
+=+4lN
+-----END PGP SIGNATURE-----
