@@ -1,4 +1,9 @@
 Changes
+Data-YAML-0.0.3/Changes
+Data-YAML-0.0.3/lib/Data/YAML.pm
+Data-YAML-0.0.3/t/30-output.t
+Data-YAML-0.0.3/t/40-writer.t
+Data-YAML-0.0.3/t/pod-coverage.t
 lib/Data/YAML.pm
 lib/Data/YAML/Reader.pm
 lib/Data/YAML/Writer.pm
@@ -6,8 +11,10 @@ Makefile.PL
 MANIFEST
 README
 t/00.load.t
-t/10-reader.t
-t/20-writer.t
+t/10-input.t
+t/20-reader.t
+t/30-output.t
+t/40-writer.t
 t/pod-coverage.t
 t/pod.t
 META.yml                                 Module meta-data (added by MakeMaker)

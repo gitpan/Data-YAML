@@ -2,10 +2,11 @@ package Data::YAML::Writer;
 
 use strict;
 use warnings;
+use Carp;
 
 use vars qw{$VERSION};
 
-$VERSION = '0.0.3';
+$VERSION = '0.0.4';
 
 my $ESCAPE_CHAR = qr{ [ \x00-\x1f \" ] }x;
 
@@ -25,13 +26,13 @@ sub new {
 sub write {
     my $self = shift;
 
-    die "Need something to write"
+    croak "Need something to write"
       unless @_;
 
     my $obj = shift;
     my $out = shift || \*STDOUT;
 
-    die "Need a reference to something I can write to"
+    croak "Need a reference to something I can write to"
       unless ref $out;
 
     $self->{writer} = $self->_make_writer( $out );
@@ -61,7 +62,7 @@ sub _make_writer {
         return sub { print $out shift(), "\n" };
     }
 
-    die "Can't write to $out";
+    croak "Can't write to $out";
 }
 
 sub _put {
@@ -112,7 +113,7 @@ sub _write_obj {
             }
         }
         else {
-            die "Don't know how to encode $ref";
+            croak "Don't know how to encode $ref";
         }
     }
     else {
@@ -127,13 +128,15 @@ __END__
 
 =head1 NAME
 
-Data::YAML - Easy YAML serialisation
+Data::YAML::Writer - Easy YAML serialisation
 
 =head1 VERSION
 
-This document describes Data::YAML version 0.0.3
+This document describes Data::YAML::Writer version 0.0.4
 
 =head1 SYNOPSIS
+    
+    use Data::YAML::Writer;
     
     my $data = {
         one => 1,

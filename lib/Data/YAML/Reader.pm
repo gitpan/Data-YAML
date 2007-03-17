@@ -6,7 +6,7 @@ use Carp;
 
 use vars qw{$VERSION};
 
-$VERSION = '0.0.3';
+$VERSION = '0.0.4';
 
 # TODO:
 #   Handle blessed object syntax
@@ -40,7 +40,7 @@ sub _make_reader {
     my $self = shift;
     my $obj  = shift;
 
-    die "Must have something to read from"
+    croak "Must have something to read from"
       unless defined $obj;
 
     if ( my $ref = ref $obj ) {
@@ -60,7 +60,7 @@ sub _make_reader {
                 return $line;
             };
         }
-        die "Don't know how to read $ref";
+        croak "Don't know how to read $ref";
     }
     else {
         my @lines = split( /\n/, $obj );
@@ -99,7 +99,7 @@ sub read {
     # restriction we'll have to implement look-ahead in the iterators.
     # Which might not be a bad idea.
     my $dots = $self->_peek;
-    die "Missing '...' at end of YAML"
+    croak "Missing '...' at end of YAML"
       unless $dots =~ $IS_END_YAML;
 
     delete $self->{reader};
@@ -128,7 +128,7 @@ sub _peek {
 
 sub _next {
     my $self = shift;
-    die "_next called with no reader"
+    croak "_next called with no reader"
       unless $self->{reader};
     my $line = $self->{reader}->();
     $self->{next} = $line;
@@ -155,14 +155,14 @@ sub _read {
             return $self->_read_hash( $next, $indent );
         }
         elsif ( $next =~ $IS_END_YAML ) {
-            die "Premature end of YAML";
+            croak "Premature end of YAML";
         }
         else {
-            die "Unsupported YAML syntax: '$next'";
+            croak "Unsupported YAML syntax: '$next'";
         }
     }
     else {
-        die "YAML document header not found";
+        croak "YAML document header not found";
     }
 }
 
@@ -202,14 +202,14 @@ sub _read_scalar {
     if ( $string =~ /^['"]/ ) {
 
         # A quote with folding... we don't support that
-        die __PACKAGE__ . " does not support multi-line quoted scalars";
+        croak __PACKAGE__ . " does not support multi-line quoted scalars";
     }
 
     # Regular unquoted string
     return $string unless $string eq '>' or $string eq '|';
 
     my ( $line, $indent ) = $self->_peek;
-    die "Multi-line scalar content missing" unless defined $line;
+    croak "Multi-line scalar content missing" unless defined $line;
 
     my @multiline = ( $line );
 
@@ -235,7 +235,7 @@ sub _read_nested {
         return $self->_read_hash( $line, $indent );
     }
     else {
-        die "Unsupported YAML syntax: '$line'";
+        croak "Unsupported YAML syntax: '$line'";
     }
 }
 
@@ -250,7 +250,7 @@ sub _read_array {
         last if $indent < $limit || !defined $line || $line =~ $IS_END_YAML;
 
         if ( $indent > $limit ) {
-            die "Array line over-indented";
+            croak "Array line over-indented";
         }
 
         if ( $line =~ /^ (- \s+) \S+ \s* : (?: \s+ | $ ) /x ) {
@@ -259,7 +259,7 @@ sub _read_array {
             push @$ar, $self->_read_hash( $line, $indent );
         }
         elsif ( $line =~ /^ - \s* (.+?) \s* $/x ) {
-            die "Unexpected start of YAML" if $line =~ /^---/;
+            croak "Unexpected start of YAML" if $line =~ /^---/;
             $self->_next;
             push @$ar, $self->_read_scalar( $1 );
         }
@@ -272,7 +272,7 @@ sub _read_array {
             push @$ar, $self->_read_hash( $line, $indent, );
         }
         else {
-            die "Unsupported YAML syntax: '$line'";
+            croak "Unsupported YAML syntax: '$line'";
         }
     }
 
@@ -286,7 +286,7 @@ sub _read_hash {
     my $hash = {};
 
     while ( 1 ) {
-        die "Badly formed hash line: '$line'"
+        croak "Badly formed hash line: '$line'"
           unless $line =~ $HASH_LINE;
 
         my ( $key, $value ) = ( $self->_read_qq( $1 ), $2 );
@@ -316,9 +316,11 @@ Data::YAML::Reader - Parse YAML created by Data::YAML::Writer
 
 =head1 VERSION
 
-This document describes Data::YAML::Reader version 0.0.3
+This document describes Data::YAML::Reader version 0.0.4
 
 =head1 SYNOPSIS
+
+    use Data::YAML::Reader;
 
     my $yr = Data::YAML::Reader->new;
     
