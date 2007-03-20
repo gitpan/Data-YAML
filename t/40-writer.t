@@ -69,6 +69,22 @@ BEGIN {
             in   => { one => '1', "\x02" => '2', three => '3' },
             out => [ '---', '"\x02": 2', 'one: 1', 'three: 3', '...', ],
         },
+        {   name => 'Empty key',
+            in   => { '' => 'empty' },
+            out  => [
+                '---',
+                "'': empty",
+                '...',
+            ],
+        },
+        {   name => 'Empty value',
+            in   => { '' => '' },
+            out  => [
+                '---',
+                "'': ''",
+                '...',
+            ],
+        },
         {
             name => 'Complex',
             in   => {

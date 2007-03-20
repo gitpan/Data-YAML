@@ -5,7 +5,7 @@ use warnings;
 
 use vars qw{$VERSION};
 
-$VERSION = '0.0.4';
+$VERSION = '0.0.5';
 
 1;
 
@@ -17,7 +17,7 @@ Data::YAML - Easy YAML serialisation of Perl data structures
 
 =head1 VERSION
 
-This document describes Data::YAML version 0.0.4
+This document describes Data::YAML version 0.0.5
 
 =head1 DESCRIPTION
 
@@ -99,6 +99,8 @@ diagnostic information to be passed from test scripts to
 L<TAP::Harness>. That means that if you're writing a testing system that
 needs to output TAP version 13 or later syntax you might find
 C<Data::YAML> useful.
+
+Read more about TAP and YAMLish here: L<http://testanything.org/wiki>
 
 =head1 BUGS AND LIMITATIONS
 

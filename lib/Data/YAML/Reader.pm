@@ -6,7 +6,7 @@ use Carp;
 
 use vars qw{$VERSION};
 
-$VERSION = '0.0.4';
+$VERSION = '0.0.5';
 
 # TODO:
 #   Handle blessed object syntax
@@ -71,20 +71,6 @@ sub _make_reader {
 sub read {
     my $self = shift;
     my $obj  = shift;
-
-    # Extra lines to prepend to the YAML stream. Crazy interface but it
-    # makes it easier for us to jump in here from the T::P::Grammar.
-    # This interface may change.
-    my @extra = @_;
-
-    # Modify the iterator to include any extra lines we've been passed.
-    if ( @extra ) {
-        my $reader = $obj;
-        $obj = sub {
-            return shift @extra if @extra;
-            return $reader->();
-          }
-    }
 
     $self->{reader}  = $self->_make_reader( $obj );
     $self->{capture} = [];
@@ -171,10 +157,8 @@ sub _read_qq {
     my $self = shift;
     my $str  = shift;
 
-    # For convenient handling of hash keys we just return our argument
-    # if it doesn't look like a quoted string.
     unless ( $str =~ s/^ " (.*?) " $/$1/x ) {
-        return $str;
+        die "Internal: not a quoted string";
     }
 
     $str =~ s/\\"/"/gx;
@@ -190,37 +174,40 @@ sub _read_scalar {
 
     return undef if $string eq '~';
 
+    if ( $string eq '>' || $string eq '|' ) {
+
+        my ( $line, $indent ) = $self->_peek;
+        die "Multi-line scalar content missing" unless defined $line;
+
+        my @multiline = ($line);
+
+        while (1) {
+            $self->_next;
+            my ( $next, $ind ) = $self->_peek;
+            last if $ind < $indent;
+            push @multiline, $next;
+        }
+
+        return join( ( $string eq '>' ? ' ' : "\n" ), @multiline ) . "\n";
+    }
+
     if ( $string =~ /^ ' (.*) ' $/x ) {
         ( my $rv = $1 ) =~ s/''/'/g;
         return $rv;
     }
 
     if ( $string =~ $IS_QQ_STRING ) {
-        return $self->_read_qq( $string );
+        return $self->_read_qq($string);
     }
 
     if ( $string =~ /^['"]/ ) {
 
         # A quote with folding... we don't support that
-        croak __PACKAGE__ . " does not support multi-line quoted scalars";
+        die __PACKAGE__ . " does not support multi-line quoted scalars";
     }
 
     # Regular unquoted string
-    return $string unless $string eq '>' or $string eq '|';
-
-    my ( $line, $indent ) = $self->_peek;
-    croak "Multi-line scalar content missing" unless defined $line;
-
-    my @multiline = ( $line );
-
-    while ( 1 ) {
-        $self->_next;
-        my ( $next, $ind ) = $self->_peek;
-        last if $ind < $indent;
-        push @multiline, $next;
-    }
-
-    return join( ( $string eq '>' ? ' ' : "\n" ), @multiline ) . "\n";
+    return $string;
 }
 
 sub _read_nested {
@@ -289,7 +276,7 @@ sub _read_hash {
         croak "Badly formed hash line: '$line'"
           unless $line =~ $HASH_LINE;
 
-        my ( $key, $value ) = ( $self->_read_qq( $1 ), $2 );
+        my ( $key, $value ) = ( $self->_read_scalar( $1 ), $2 );
         $self->_next;
 
         if ( defined $value ) {
@@ -316,7 +303,7 @@ Data::YAML::Reader - Parse YAML created by Data::YAML::Writer
 
 =head1 VERSION
 
-This document describes Data::YAML::Reader version 0.0.4
+This document describes Data::YAML::Reader version 0.0.5
 
 =head1 SYNOPSIS
 
@@ -375,6 +362,9 @@ In the case of a code reference a subroutine (most likely a closure)
 that returns successive lines of YAML must be supplied. Lines should
 have no trailing newline. When the YAML is exhausted the subroutine must
 return undef.
+
+Returns the data structure (specifically either a scalar, hash ref or
+array ref) that results from decoding the YAML.
 
 =item C<< get_raw >>
 

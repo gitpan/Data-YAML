@@ -1,9 +1,4 @@
 Changes
-Data-YAML-0.0.3/Changes
-Data-YAML-0.0.3/lib/Data/YAML.pm
-Data-YAML-0.0.3/t/30-output.t
-Data-YAML-0.0.3/t/40-writer.t
-Data-YAML-0.0.3/t/pod-coverage.t
 lib/Data/YAML.pm
 lib/Data/YAML/Reader.pm
 lib/Data/YAML/Writer.pm
